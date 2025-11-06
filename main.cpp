@@ -309,7 +309,7 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
         Sprite wallSprite(wallTexture);
         Sprite foodSprite(foodTexture);
 
-        // Vẽ nền cỏ (lặp 2 vòng for để vẽ đầy 20x20 ô)
+        // Vẽ nền cỏ
         for (int x = 0; x < 1; x++) {
             for (int y = 0; y < 1; y++) {
                 // Đặt vị trí cho sprite cỏ
