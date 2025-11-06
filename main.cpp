@@ -1,14 +1,26 @@
 // === BAO GỒM CÁC THƯ VIỆN ===
 // Các thư viện này cung cấp các công cụ/hàm/lớp mà chúng ta cần sử dụng
-#include <SFML/Graphics.hpp> // Thư viện chính của SFML (Đồ họa, Cửa sổ, Sự kiện, Text, Font...)
-#include <vector>            // Thư viện C++ để sử dụng std::vector (dùng để lưu thân con rắn)
-#include <cstdlib>           // Thư viện C++ cho các hàm chung, bao gồm rand() (tạo số ngẫu nhiên)
-#include <ctime>             // Thư viện C++ cho hàm time() (lấy thời gian làm "hạt giống" cho rand)
-#include <iostream>          // Thư viện C++ cho việc nhập/xuất console (dùng cout, cerr để báo lỗi)
-#include <optional>          // Thư viện C++ (từ C++17), cần cho hàm pollEvent của SFML 3.0
-#include <fstream>           // <-- Thư viện để ĐỌC/GHI FILE (dùng cho highscore)
-#include <sstream>           // <-- Thư viện để xử lý chuỗi (nối chuỗi cho text highscore)
-#include <string>            // <-- Thư viện để dùng std::string
+
+// Thư viện chính của SFML (Đồ họa, Cửa sổ, Sự kiện, Text, Font...)
+#include <SFML/Graphics.hpp> 
+// Thư viện Âm thanh của SFML (cho Sound và Music)
+#include <SFML/Audio.hpp>    
+// Thư viện C++ để sử dụng std::vector (dùng để lưu thân con rắn)
+#include <vector>
+// Thư viện C++ cho các hàm chung, bao gồm rand() (tạo số ngẫu nhiên)
+#include <cstdlib>
+// Thư viện C++ cho hàm time() (lấy thời gian làm "hạt giống" cho rand)
+#include <ctime>
+// Thư viện C++ cho việc nhập/xuất console (dùng cout, cerr để báo lỗi)
+#include <iostream>
+// Thư viện C++ (từ C++17), cần cho hàm pollEvent của SFML 3.0
+#include <optional>
+// Thư viện để ĐỌC/GHI FILE (dùng cho highscore)
+#include <fstream>
+// Thư viện để xử lý chuỗi (nối chuỗi cho text highscore)
+#include <sstream>
+// Thư viện để dùng std::string
+#include <string>
 
 // === SỬ DỤNG NAMESPACE ===
 // Giúp chúng ta gõ tên hàm/lớp ngắn gọn hơn
@@ -24,7 +36,7 @@ const float SPEED = 0.1f; // Tốc độ di chuyển của rắn (giây). Số c
 
 // === ENUM (LIỆT KÊ) CHO CÁC HƯỚNG ===
 // Định nghĩa các hằng số đại diện cho các hướng di chuyển
-enum Direction { STOP = 0, LEFT, RIGHT, UP, DOWN }; // STOP=0, LEFT=1, RIGHT=2,...
+enum Direction { STOP = 0, LEFT, RIGHT, UP, DOWN }; 
 
 // === ENUM CHO TRẠNG THÁI GAME ===
 // Dùng để quản lý xem game đang ở màn hình nào
@@ -37,7 +49,7 @@ private: // Các thành viên "private" chỉ có thể được truy cập từ
     
     // --- CÁC BIẾN TRẠNG THÁI GAME ---
     RenderWindow window;     // Cửa sổ game chính
-    vector<Vector2i> body; // Một vector (danh sách) lưu tọa độ (x,y) của TỪNG ĐỐT rắn
+    vector<Vector2i> body; // Vector (danh sách) lưu tọa độ (x,y) của TỪNG ĐỐT rắn
     Direction dir;           // Hướng di chuyển hiện tại của rắn
     int score;               // Điểm số của người chơi
     Vector2i food;           // Tọa độ (x,y) của mồi
@@ -46,9 +58,10 @@ private: // Các thành viên "private" chỉ có thể được truy cập từ
     float moveTimer;         // Biến đếm thời gian, dùng để so sánh với SPEED
 
     // --- CÁC BIẾN TEXTURE (ẢNH) ---
-    Texture grassTexture;   // Ảnh nền cỏ (32x32)
-    Texture wallTexture;    // Ảnh tường (32x32)
-    Texture foodTexture;    // Ảnh mồi (32x32)
+    // (Lưu dữ liệu ảnh trong VRAM)
+    Texture grassTexture;    // Ảnh nền cỏ (bạn đang dùng 1x1 ô)
+    Texture wallTexture;     // Ảnh tường (32x32)
+    Texture foodTexture;     // Ảnh mồi (32x32)
 
     // 14 ảnh cho rắn (32x32)
     Texture texHeadUp, texHeadDown, texHeadLeft, texHeadRight;
@@ -57,21 +70,34 @@ private: // Các thành viên "private" chỉ có thể được truy cập từ
     Texture texCornerUL, texCornerUR, texCornerDL, texCornerDR;
     
     // --- CÁC BIẾN FONT VÀ TEXT (CHỮ) ---
-    Font font;         // Biến lưu trữ file font chữ (ví dụ: arial.ttf)
+    Font font;         // Biến lưu trữ file font chữ (ví dụ: jokerman.ttf)
     Text scoreText;    // Đối tượng Text để hiển thị điểm số (ở thanh bên phải)
     Text gameOverText; // Đối tượng Text để hiển thị chữ "GAME OVER"
 
     // --- CÁC BIẾN CHO MENU VÀ HIGHSCORE ---
-    GameState gameState;      // Biến quan trọng, lưu trạng thái hiện tại (MENU, PLAYING,...)
-    int highScore;            // Biến lưu điểm cao nhất
-    
+    GameState gameState;       // Biến quan trọng, lưu trạng thái hiện tại (MENU, PLAYING,...)
+    int highScore;             // Biến lưu điểm cao nhất
     Texture texMenuBackground; // Ảnh nền cho Menu (800x640)
     
-    Text menuPlay;            // Text "1. NewGame"
-    Text menuHighscore;       // Text "2. HighScore"
-    
-    Text highscoreDisplayText; // Text để hiển thị ở màn hình highscore
+    Text menuPlay;             // Text "1. NewGame"
+    Text menuHighscore;        // Text "2. HighScore"
+    Text highscoreDisplayText; // Text để hiển thị ở màn hình highscore 
+    Texture texGameOverPanel;  // Texture cho bảng ảnh PNG lúc Game Over
 
+    // --- CÁC BIẾN CHO ÂM THANH ---
+    // SoundBuffer: Tải file âm thanh vào RAM
+    SoundBuffer eatBuffer;
+    SoundBuffer gameOverBuffer;
+    SoundBuffer moveBuffer; 
+    
+    // Sound: Dùng để phát SoundBuffer (giống Sprite dùng Texture)
+    Sound eatSound;
+    Sound gameOverSound;
+    Sound moveSound;
+    
+    // Music: Dùng để phát file nhạc dài (phát trực tiếp từ file)
+    Music menuMusic;        
+    
     // --- CÁC HÀM PRIVATE (HÀM NỘI BỘ) ---
 
     // Hàm tải Highscore từ file "highscore.txt"
@@ -104,29 +130,42 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
     // Hàm này được gọi tự động MỘT LẦN khi đối tượng SnakeGame được tạo ra
     SnakeGame() :
         // Danh sách khởi tạo (cách tối ưu để gán giá trị ban đầu cho các biến)
-        window(VideoMode({800, 640}), "Snake Game"), // Tạo cửa sổ 800x640
-        scoreText(font, "", 20),                     // Khởi tạo text (font, nội dung, cỡ chữ)
+        window(VideoMode({800, 640}), "Snake Game"), 
+        scoreText(font, "", 20),
         gameOverText(font, "GAME OVER!\nPress R to restart\nPress M for Menu", 30),
-        
-        // Khởi tạo các text cho Menu
         menuPlay(font, "1. NewGame", 40),
         menuHighscore(font, "2. HighScore", 40),
-        highscoreDisplayText(font, "", 30)
+        highscoreDisplayText(font, "", 30),
+        
+        // Sửa lỗi SFML 3: Khởi tạo Sound với Buffer (dù Buffer đang rỗng)
+        eatSound(eatBuffer),
+        gameOverSound(gameOverBuffer),
+        moveSound(moveBuffer)
     {
         // --- Thân hàm Constructor (chạy sau danh sách khởi tạo) ---
         
         gameState = MENU; // Bắt đầu game ở trạng thái MENU
         loadHighScore();  // Tải điểm cao đã lưu
-        loadTextures(); // Gọi hàm tải TẤT CẢ ảnh
+        loadTextures();   // Tải TẤT CẢ asset (ảnh + âm thanh)
+        
+        // === GÁN LẠI BUFFER (SAU KHI ĐÃ TẢI) ===
+        // (Cách làm đúng để sửa lỗi "dừng hình" và lỗi "SFML 3")
+        eatSound.setBuffer(eatBuffer);
+        gameOverSound.setBuffer(gameOverBuffer);
+        moveSound.setBuffer(moveBuffer);
+        // =====================================
+        
+        // Cài đặt nhạc menu
+        menuMusic.setVolume(50); // Đặt âm lượng (tùy chọn)
         
         // Tải file font chữ
-        if (!font.openFromFile("jokerman.ttf")) {
-            cerr << "Failed to load font!" << endl; // Báo lỗi nếu không tìm thấy font
+        if (!font.openFromFile("jokerman.ttf")) { 
+            cerr << "Failed to load font!" << endl;
         }
 
-        // Cài đặt text điểm (ở thanh bên phải)
+        // --- Cài đặt các Text ---
         scoreText.setFillColor(Color::White);
-        scoreText.setPosition(Vector2f(650.0f, 20.0f));
+        scoreText.setPosition(Vector2f(650.0f, 20.0f)); // Vị trí thanh bên
 
         // Căn giữa text "Game Over"
         gameOverText.setFillColor(Color::Red);
@@ -134,74 +173,93 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
         // Đặt điểm gốc (origin) vào chính giữa text
         gameOverText.setOrigin({textRect.position.x + textRect.size.x / 2.0f,
                                 textRect.position.y + textRect.size.y / 2.0f});
-        // Đặt vị trí của text vào giữa màn hình game (lưới 640x640)
+        // Đặt vị trí của text vào giữa màn hình game
         gameOverText.setPosition(Vector2f(WIDTH * CELL_SIZE / 2.0f, HEIGHT * CELL_SIZE / 2.0f));
 
         // Căn giữa các text của Menu
-        float menuCenterX = (WIDTH * CELL_SIZE) / 2.0f; // Tọa độ X giữa màn hình (320)
+        float menuCenterX = (WIDTH * CELL_SIZE) / 2.0f; 
 
         menuPlay.setFillColor(Color::White);
         textRect = menuPlay.getLocalBounds();
         menuPlay.setOrigin({textRect.position.x + textRect.size.x / 2.0f, textRect.position.y + textRect.size.y / 2.0f});
-        menuPlay.setPosition(Vector2f(menuCenterX, 500.0f));
+        menuPlay.setPosition(Vector2f(menuCenterX, 500.0f)); // Đặt ở dưới
 
         menuHighscore.setFillColor(Color::White);
         textRect = menuHighscore.getLocalBounds();
         menuHighscore.setOrigin({textRect.position.x + textRect.size.x / 2.0f, textRect.position.y + textRect.size.y / 2.0f});
-        menuHighscore.setPosition(Vector2f(menuCenterX, 560.0f));
+        menuHighscore.setPosition(Vector2f(menuCenterX, 560.0f)); // Đặt ở dưới
 
         // Cài đặt text cho màn hình Highscore
         highscoreDisplayText.setFillColor(Color::White);
-        // Gọi resetGame để chuẩn bị các giá trị (như điểm = 0, rắn, mồi)
+        
+        // Chuẩn bị cho ván game đầu tiên
         resetGame(); 
     }
 
-    // --- HÀM TẢI ẢNH (TEXTURE) ---
+    // --- HÀM TẢI ẢNH VÀ ÂM THANH ---
     void loadTextures() {
-        cout << "=== LOADING TEXTURES ===" << endl;
+        cout << "=== LOADING ASSETS (Textures & Sounds) ===" << endl;
         
         // Tải ảnh nền menu (800x640)
         if (!texMenuBackground.loadFromFile("menu_background.png")) {
-            // Nếu thất bại, tạo ảnh mặc định (SFML 3)
-            // Dùng constructor của Image để tạo ảnh có kích thước VÀ màu
             Image img({800, 640}, Color(40, 40, 40)); 
-            
-            // Tải texture từ image (và kiểm tra lỗi)
             if (!texMenuBackground.loadFromImage(img)) {
                 cerr << "Failed to create default menu background!" << endl;
             }
         }
-        // (Đã xóa setSmooth)
-
-        // Tải ảnh 32x32 (cỏ, tường, mồi)
+        
+        // Tải ảnh nền game (grass.png)
         if (!grassTexture.loadFromFile("grass.png")) createDefaultTexture(grassTexture, Color(100, 200, 100));
+        
+        // Tải tường, mồi
         if (!wallTexture.loadFromFile("wall.png")) createDefaultTexture(wallTexture, Color(100, 100, 255));
         if (!foodTexture.loadFromFile("food.png")) createDefaultTexture(foodTexture, Color::Red);
-        // (Đã xóa setSmooth)
         
-        // Tải 4 ảnh ĐẦU rắn
+        // Tải bảng Game Over
+        if (!texGameOverPanel.loadFromFile("game_over_panel.png")) {
+            Image img({400, 250}, Color(0, 0, 0, 180)); // Đen mờ 
+            if (!texGameOverPanel.loadFromImage(img)) {
+                cerr << "Failed to create default game over panel!" << endl;
+            }
+        }
+        
+        // Tải 14 ảnh rắn
         if (!texHeadUp.loadFromFile("snake_head_up.png")) createDefaultTexture(texHeadUp, Color::Green);
         if (!texHeadDown.loadFromFile("snake_head_down.png")) createDefaultTexture(texHeadDown, Color::Green);
         if (!texHeadLeft.loadFromFile("snake_head_left.png")) createDefaultTexture(texHeadLeft, Color::Green);
         if (!texHeadRight.loadFromFile("snake_head_right.png")) createDefaultTexture(texHeadRight, Color::Green);
-
-        // Tải 4 ảnh ĐUÔI rắn
         if (!texTailUp.loadFromFile("snake_tail_up.png")) createDefaultTexture(texTailUp, Color(0,150,0));
         if (!texTailDown.loadFromFile("snake_tail_down.png")) createDefaultTexture(texTailDown, Color(0,150,0));
         if (!texTailLeft.loadFromFile("snake_tail_left.png")) createDefaultTexture(texTailLeft, Color(0,150,0));
         if (!texTailRight.loadFromFile("snake_tail_right.png")) createDefaultTexture(texTailRight, Color(0,150,0));
-
-        // Tải 2 ảnh THÂN THẲNG
         if (!texBodyVertical.loadFromFile("snake_body_vertical.png")) createDefaultTexture(texBodyVertical, Color(0,200,0));
         if (!texBodyHorizontal.loadFromFile("snake_body_horizontal.png")) createDefaultTexture(texBodyHorizontal, Color(0,200,0));
-
-        // Tải 4 ảnh GÓC CUA
         if (!texCornerUL.loadFromFile("snake_corner_ul.png")) createDefaultTexture(texCornerUL, Color(0,180,0));
         if (!texCornerUR.loadFromFile("snake_corner_ur.png")) createDefaultTexture(texCornerUR, Color(0,180,0));
         if (!texCornerDL.loadFromFile("snake_corner_dl.png")) createDefaultTexture(texCornerDL, Color(0,180,0));
         if (!texCornerDR.loadFromFile("snake_corner_dr.png")) createDefaultTexture(texCornerDR, Color(0,180,0));
         
-        cout << "=== TEXTURE LOADING COMPLETE ===" << endl;
+        // Tải Sound Buffer (file âm thanh)
+        if (!eatBuffer.loadFromFile("eat.wav")) {
+            cerr << "Failed to load eat.wav!" << endl;
+        }
+        if (!gameOverBuffer.loadFromFile("game_over.wav")) {
+            cerr << "Failed to load game_over.wav!" << endl;
+        }
+        if (!moveBuffer.loadFromFile("move.wav")) {
+             cerr << "Failed to load move.wav!" << endl;
+        }
+        
+        // Tải Music (nhạc nền)
+        if (!menuMusic.openFromFile("menu_music.ogg")) { // .ogg tốt cho nhạc dài
+             cerr << "Failed to load menu_music.ogg!" << endl;
+        } else {
+             // Sửa lỗi SFML 3: Đặt lặp lại (loop) bằng TimeSpan
+             // Dùng ngoặc nhọn {} để khởi tạo
+             menuMusic.setLoopPoints(Music::TimeSpan{Time::Zero, menuMusic.getDuration()});
+        }
+        
+        cout << "=== ASSET LOADING COMPLETE ===" << endl;
     }
 
     // --- HÀM TẠO TEXTURE MẶC ĐỊNH (32x32) ---
@@ -235,11 +293,10 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
     // --- HÀM TẠO MỒI ---
     void spawnFood() {
         do { // Bắt đầu vòng lặp
-            // 1. Tạo tọa độ x ngẫu nhiên (từ 1 đến 18)
+            // Tạo tọa độ x,y ngẫu nhiên (từ 1 đến 18)
             food.x = 1 + rand() % (WIDTH - 2); 
-            // 2. Tạo tọa độ y ngẫu nhiên (từ 1 đến 18)
-            food.y = 1 + rand() % (HEIGHT - 2);
-        } while (isPositionInSnake(food)); // 3. Lặp lại nếu vị trí mồi trùng với thân rắn
+            food.y = 1 + rand() % (HEIGHT - 2); 
+        } while (isPositionInSnake(food)); // Lặp lại nếu vị trí mồi trùng với thân rắn
     }
 
     // --- HÀM KIỂM TRA VA CHẠM VỚI RẮN ---
@@ -255,7 +312,7 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
         // Nối chuỗi (string) và gán cho scoreText
         scoreText.setString("Score: " + to_string(score) + 
                           "\nHigh Score: " + to_string(highScore) + // Thêm Highscore
-                          "\n\nControls:\nW - Up\nA - Left\nS - Down\nD - Right\n\nESC - Menu"); // Sửa hướng dẫn
+                          "\n\nControls:\nW - Up\nA - Left\nS - Down\nD - Right\n\nESC - Menu"); 
     } 
 
     // --- HÀM XỬ LÝ INPUT (SỰ KIỆN) ---
@@ -294,11 +351,8 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                             sf::Rect textRect = highscoreDisplayText.getLocalBounds();
                             highscoreDisplayText.setOrigin({textRect.position.x + textRect.size.x / 2.0f,
                                                             textRect.position.y + textRect.size.y / 2.0f});
-                            // Lấy X giữa màn hình (giống menu)
                             float menuCenterX = (WIDTH * CELL_SIZE) / 2.0f; // 320.0f
-                            // Đặt vị trí Y ở gần cuối (ví dụ 530)
                             highscoreDisplayText.setPosition(Vector2f(menuCenterX, 530.0f));
-                            // ======================================
                         }
                         break; // Hết case MENU
 
@@ -350,6 +404,27 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
     // --- HÀM CẬP NHẬT LOGIC GAME ---
     // (Chạy liên tục)
     void update() {
+        
+        // --- QUẢN LÝ NHẠC NỀN ---
+        // (Đây là logic sửa lỗi nhạc không phát)
+        // 1. Nếu đang ở MENU hoặc HIGHSCORE
+        if (gameState == MENU || gameState == HIGHSCORE_SCREEN) {
+            // 2. Và nếu nhạc đang không phát...
+            // (SFML 3: Dùng 'SoundSource::Status::Playing')
+            if (menuMusic.getStatus() != SoundSource::Status::Playing) {
+                menuMusic.play(); // 3. ...Thì phát nhạc
+            }
+        }
+        // 4. Ngược lại (nếu đang ở PLAYING hoặc GAME_OVER)
+        else {
+            // 5. Và nếu nhạc đang phát...
+            if (menuMusic.getStatus() == SoundSource::Status::Playing) {
+                menuMusic.stop(); // 6. ...Thì dừng nhạc
+            }
+        }
+        
+        // --- LOGIC DI CHUYỂN CỦA RẮN ---
+        
         // Chỉ chạy logic di chuyển rắn khi đang ở trạng thái PLAYING
         if (gameState != PLAYING) return;
 
@@ -372,34 +447,36 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                 case LEFT:  newHead.x--; break;
                 case RIGHT: newHead.x++; break;
             }
-
+            
+            // --- XỬ LÝ VA CHẠM (CÓ ÂM THANH) ---
+            
             // Kiểm tra va chạm tường
             if (newHead.x <= 0 || newHead.x >= WIDTH - 1 || newHead.y <= 0 || newHead.y >= HEIGHT - 1) {
-                gameOver = true;       // Đặt cờ thua
-                gameState = GAME_OVER; // Chuyển trạng thái
-                saveHighScore();       // Lưu điểm (nếu cao)
-                return;                // Dừng
+                gameOver = true; gameState = GAME_OVER; saveHighScore();
+                gameOverSound.play(); // <-- Phát âm thanh thua
+                return;
             }
-
             // Kiểm tra va chạm thân
-            for (size_t i = 1; i < body.size(); i++) { // Duyệt từ đốt 1 (thân)
-                if (newHead == body[i]) { // Nếu đầu mới trùng 1 đốt thân
-                    gameOver = true;
-                    gameState = GAME_OVER;
-                    saveHighScore();
+            for (size_t i = 1; i < body.size(); i++) {
+                if (newHead == body[i]) {
+                    gameOver = true; gameState = GAME_OVER; saveHighScore();
+                    gameOverSound.play(); // <-- Phát âm thanh thua
                     return;
                 }
             }
+            
+            // Phát âm thanh di chuyển (nếu rắn không đứng yên)
+            /*if (dir != STOP) {
+                moveSound.play();
+            }*/
 
             // Di chuyển: Thêm đầu mới
             body.insert(body.begin(), newHead);
 
-            // Kiểm tra ăn mồi
+            // Kiểm tra ăn mồi (có âm thanh)
             if (newHead == food) {
-                score++;         // Tăng điểm
-                updateScoreText(); // Cập nhật text
-                spawnFood();     // Tạo mồi mới
-                // (Không xóa đuôi -> rắn dài ra)
+                score++; updateScoreText(); spawnFood();
+                eatSound.play(); // <-- Phát âm thanh ăn
             } else {
                 body.pop_back(); // Xóa đuôi (nếu không ăn)
             }
@@ -425,7 +502,6 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                 // Vẽ các text menu (lớp trên)
                 window.draw(menuPlay);
                 window.draw(menuHighscore);
-                // (Không vẽ scoreText ở menu)
             } 
             break; // Hết case MENU
 
@@ -438,13 +514,14 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                 Sprite wallSprite(wallTexture);
                 Sprite foodSprite(foodTexture);
 
-                // Vẽ 20x20 ô cỏ
+                // Vòng lặp 1x1 của bạn (vẽ 1 ô cỏ)
                 for (int x = 0; x < 1; x++) { 
                     for (int y = 0; y < 1; y++) {
                         grassSprite.setPosition(Vector2f(static_cast<float>(x * CELL_SIZE), static_cast<float>(y * CELL_SIZE)));
                         window.draw(grassSprite);
                     }
                 }
+                
                 // Vẽ 4 cạnh tường
                 for (int x = 0; x < WIDTH; x++) {
                     wallSprite.setPosition(Vector2f(static_cast<float>(x * CELL_SIZE), 0.0f));
@@ -467,7 +544,6 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                 
                 // Lặp qua từng đốt rắn
                 for (size_t i = 0; i < body.size(); i++) {
-                    // Lấy vị trí pixel
                     Vector2f pos(static_cast<float>(body[i].x * CELL_SIZE),
                                  static_cast<float>(body[i].y * CELL_SIZE));
                     snakeSegmentSprite.setPosition(pos); // Đặt vị trí
@@ -482,8 +558,7 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                     }
                     // B. VẼ ĐUÔI
                     else if (i == body.size() - 1) { 
-                        Vector2i prev = body[i - 1]; // Đốt trước
-                        Vector2i curr = body[i];     // Đốt đuôi
+                        Vector2i prev = body[i - 1]; Vector2i curr = body[i];
                         if (prev.y < curr.y) snakeSegmentSprite.setTexture(texTailUp);
                         else if (prev.y > curr.y) snakeSegmentSprite.setTexture(texTailDown);
                         else if (prev.x < curr.x) snakeSegmentSprite.setTexture(texTailLeft);
@@ -494,11 +569,8 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
                         Vector2i prev = body[i - 1]; Vector2i curr = body[i]; Vector2i next = body[i + 1];
                         int prev_dx = prev.x - curr.x; int prev_dy = prev.y - curr.y;
                         int next_dx = next.x - curr.x; int next_dy = next.y - curr.y;
-
-                        // Thân thẳng
                         if (prev_dx == next_dx) snakeSegmentSprite.setTexture(texBodyVertical);
                         else if (prev_dy == next_dy) snakeSegmentSprite.setTexture(texBodyHorizontal);
-                        // Thân cong (Logic đã sửa chuẩn)
                         else {
                             if ((prev_dy == -1 && next_dx == 1) || (prev_dx == 1 && next_dy == -1)) snakeSegmentSprite.setTexture(texCornerDR); 
                             else if ((prev_dy == -1 && next_dx == -1) || (prev_dx == -1 && next_dy == -1)) snakeSegmentSprite.setTexture(texCornerDL);
@@ -511,8 +583,18 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
 
                 // 4. VẼ TEXT (trên cùng)
                 window.draw(scoreText); // Vẽ text điểm bên phải
-                if (gameOver) { // Nếu thua
-                    window.draw(gameOverText); // Vẽ text "GAME OVER"
+                
+                // 5. VẼ BẢNG GAME OVER (nếu thua)
+                if (gameOver) { 
+                    Sprite panelSprite(texGameOverPanel); // Tạo sprite cục bộ
+                    sf::Rect panelRect = panelSprite.getLocalBounds();
+                    // Căn giữa bảng
+                    panelSprite.setOrigin({panelRect.position.x + panelRect.size.x / 2.0f,
+                                           panelRect.position.y + panelRect.size.y / 2.0f});
+                    panelSprite.setPosition(Vector2f(WIDTH * CELL_SIZE / 2.0f, HEIGHT * CELL_SIZE / 2.0f));
+                    
+                    window.draw(panelSprite); // Vẽ bảng (bên dưới)
+                    window.draw(gameOverText);  // Vẽ text (đè lên trên)
                 }
             } 
             break; // Hết case PLAYING/GAME_OVER
@@ -537,11 +619,10 @@ public: // Các thành viên "public" có thể được gọi từ bên ngoài 
 
     // --- HÀM CHẠY (RUN) VÒNG LẶP GAME CHÍNH ---
     void run() {
-        // Khởi tạo "hạt giống" (seed) cho hàm rand() dựa trên thời gian hiện tại
-        // (Để mỗi lần chạy game, mồi sẽ ở vị trí ngẫu nhiên khác nhau)
+        // Khởi tạo "hạt giống" (seed) cho hàm rand()
         srand(static_cast<unsigned int>(time(nullptr)));
 
-        // Vòng lặp chính của game (chạy liên tục khi cửa sổ còn mở)
+        // Vòng lặp chính của game
         while (window.isOpen()) {
             processInput(); // 1. Xử lý phím
             update();       // 2. Cập nhật logic
